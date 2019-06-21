@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
-namespace NG_Core_Auth.Controllers
+namespace market.Controllers
 {
     [Route("api/[controller]")]
     public class SampleDataController : Controller

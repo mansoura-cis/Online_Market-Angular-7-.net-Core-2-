@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace NG_Core_Auth
+namespace market
 {
     public class Startup
     {
@@ -15,7 +15,7 @@ namespace NG_Core_Auth
             Configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
+                        public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -26,6 +26,16 @@ namespace NG_Core_Auth
             services.AddSpaStaticFiles(configuration =>
             {
                 configuration.RootPath = "ClientApp/dist";
+            });
+
+            // Enable CORS 
+            services.AddCors(options =>
+            {
+
+             options.AddPolicy("EnableCORS", builder =>
+                {
+                   builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod().AllowCredentials().Build();
+                });
             });
         }
 
@@ -42,6 +52,8 @@ namespace NG_Core_Auth
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+            //Enabling the CORS APPS
+            app.UseCors("EnableCORS");
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
@@ -53,6 +65,8 @@ namespace NG_Core_Auth
                     name: "default",
                     template: "{controller}/{action=Index}/{id?}");
             });
+
+            
 
             app.UseSpa(spa =>
             {
