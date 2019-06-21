@@ -1,9 +1,9 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace market{
+namespace market.Models{
     
-   public class Products
+   public class ProductsModel
     {
         [Key]
         public int ProductId { get; set; }

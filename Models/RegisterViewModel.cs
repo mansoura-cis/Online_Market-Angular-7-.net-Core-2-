@@ -1,7 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace market{
+namespace market.Models{
     
    public class RegisterViewModel
     {
