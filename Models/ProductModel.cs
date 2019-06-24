@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace market.Models{
     
-   public class ProductsModel
+   public class ProductModel
     {
         [Key]
         public int ProductId { get; set; }

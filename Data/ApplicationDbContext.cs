@@ -17,15 +17,15 @@ namespace market
 
               base.OnModelCreating(builder);
               builder.Entity<IdentityRole>().HasData(
-                  new { Id = 1 , Name = "Admin" ,NormalizedName= "Admin" },
-                  new { Id = 2 , Name = "Customer" ,NormalizedName= "Customer" },
-                  new { Id = 1 , Name = "Moderator" ,NormalizedName= "Moderator" }
+                  new { Id = "1" , Name = "Admin" ,NormalizedName= "Admin" },
+                  new { Id = "2" , Name = "Customer" ,NormalizedName= "Customer" },
+                  new { Id = "3" , Name = "Moderator" ,NormalizedName= "Moderator" }
 
               );
 
 
          }
-             public DbSet<ProductsModel> products {get; set;}
+             public DbSet<ProductModel> products {get; set;}
 
     }
 
