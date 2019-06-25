@@ -8,6 +8,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using System;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using market.Helpers;
+using System.Text;
 
 namespace market
 {
@@ -44,7 +48,7 @@ namespace market
 
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-
+            
             //Identity framework Injection
             services.AddIdentity<IdentityUser, IdentityRole>(options => {
                 // password validation Requirements
@@ -60,6 +64,37 @@ namespace market
                 options.Lockout.MaxFailedAccessAttempts = 5;
 
             }).AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
+
+            // configure strongly typed settings objects
+            var appSettingsSection = Configuration.GetSection("AppSettings");
+            services.Configure<AppSettings>(appSettingsSection);
+
+            var appSettings = appSettingsSection.Get<AppSettings>();
+            var key =Encoding.ASCII.GetBytes( appSettings.Secret);
+
+            // Authintication Middleware
+            services.AddAuthentication(o =>
+            {
+                o.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                o.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
+                o.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            }
+            ).AddJwtBearer(JwtBearerDefaults.AuthenticationScheme , options =>
+            {
+
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+
+                    ValidateIssuerSigningKey = true,
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidIssuer = appSettings.Site,
+                    ValidAudience = appSettings.Audience,
+                    IssuerSigningKey = new SymmetricSecurityKey(key)
+
+
+                };
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -85,6 +120,8 @@ namespace market
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
+            // Enapling Authinitication
+            app.UseAuthentication();
 
             app.UseMvc(routes =>
             {
