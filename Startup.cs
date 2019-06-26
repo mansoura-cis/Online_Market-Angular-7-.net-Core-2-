@@ -96,6 +96,24 @@ namespace market
 
                 };
             });
+
+            #region Authorization Middleware
+            services.AddAuthorization(options => {
+                // Require authontication first from all roles
+                options.AddPolicy("RequireLoggedin", policy => policy.RequireRole("Customer", "Moderator", "Admin").RequireAuthenticatedUser());
+                // Require admin to do managment operations just
+                options.AddPolicy("RequireAdministratorRole", policy => policy.RequireRole("Admin").RequireAuthenticatedUser());
+
+            });
+            /*
+             Requirements/
+               User should be Authenticated 
+               User Must be Authorized
+             
+             In oreder to view all products
+             */
+
+            #endregion
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using market.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace market.Controllers
 {
@@ -25,7 +26,9 @@ namespace market.Controllers
 
         #region GET Products 
         // api/Product
+        
         [HttpGet("[action]")]
+        [Authorize(Policy = "RequireLoggedin")]
         public IActionResult GetProducts()
         {
             return Ok(_db.products.ToList());
@@ -33,7 +36,9 @@ namespace market.Controllers
         #endregion
 
         #region Add products
+       
         [HttpPost("[action]")]
+        [Authorize(Policy = "RequireAdministratorRole")]
         public async Task<IActionResult> AddProduct([FromBody] ProductModel formdata)
         {
             var newProduct = new ProductModel
@@ -55,6 +60,7 @@ namespace market.Controllers
 
         #region Update Product
         [HttpPut("[action]/[id]")]
+        [Authorize(Policy = "RequireAdministratorRole")]
         public async Task<IActionResult> updateProduct([FromRoute] int id , [FromBody] ProductModel formdata )
         {
             if (!ModelState.IsValid)
@@ -82,6 +88,7 @@ namespace market.Controllers
 
         #region Delete product
         [HttpDelete("[action]/[id]")]
+        [Authorize(Policy = "RequireAdministratorRole")]
         public async Task<IActionResult> DeleteProduct([FromRoute] int id)
         {
             if(!ModelState.IsValid)
