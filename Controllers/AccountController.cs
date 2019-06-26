@@ -26,16 +26,15 @@ namespace market.Controllers
         private readonly AppSettings _appSettings;
 
 
-        public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signManager ,IOptions<AppSettings> appSettings)
+        public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signManager, IOptions<AppSettings> appSettings)
         {
             _userManager = userManager;
             _signManager = signManager;
             _appSettings = appSettings.Value;
         }
 
-        [HttpPost("action")]
-        public async Task<IActionResult> Register([FromBody] RegisterViewModel formdata)
-        {
+        [HttpPost("[action]")]
+        public async Task<IActionResult> register([FromBody] RegisterViewModel formdata ){
             // Will Hold all The errors related to Registration
             List<string> errorList = new List<string> {};
 
@@ -68,7 +67,7 @@ namespace market.Controllers
         }
 
         // Login Method 
-        [HttpPost("action")]
+        [HttpPost("[action]")]
         public async Task<IActionResult> login([FromBody]LoginViewModel formdata)
         {
             // find a user
@@ -81,14 +80,14 @@ namespace market.Controllers
             var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_appSettings.Secret));
 
             // Expire time defining
-            double tokenExpiryTime = double.Parse( _appSettings.ExpireTime);
-
+            var tokenExpirytime =  Convert.ToDouble(_appSettings.ExpireTime)+60;
+           
             if (user != null && await _userManager.CheckPasswordAsync(user,formdata.Password))
             {
                 // Confirmation Email
 
                 var tokenHandler = new JwtSecurityTokenHandler();
-                var tokenDiscriptor = new SecurityTokenDescriptor {
+                var tokenDiscriptor = new SecurityTokenDescriptor{
                     Subject = new ClaimsIdentity(new Claim[]
                     {
                         new Claim(JwtRegisteredClaimNames.Sub, formdata.Username),
@@ -97,20 +96,21 @@ namespace market.Controllers
                         new Claim(ClaimTypes.Role, roles.FirstOrDefault()),
                         new Claim("LoggedOn", DateTime.Now.ToString()),
 
-
                     }),
+                    
                     SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature),
                     Issuer = _appSettings.Site,
                     Audience = _appSettings.Audience,
-                    Expires = DateTime.UtcNow.AddMinutes(tokenExpiryTime)
+                    Expires = DateTime.Now.AddMinutes(tokenExpirytime),
+             
+                    IssuedAt =DateTime.Now
                     
                 };
 
 
                 // generate Token
                 var token = tokenHandler.CreateToken(tokenDiscriptor);
-                return Ok(new { token =tokenHandler.WriteToken(token), expiration = token.ValidTo, username = user.UserName ,userRole = roles.FirstOrDefault()
-            });
+                return Ok(new { token =tokenHandler.WriteToken(token), expiration = token.ValidTo, username = user.UserName ,userRole = roles.FirstOrDefault()});
 
 
 

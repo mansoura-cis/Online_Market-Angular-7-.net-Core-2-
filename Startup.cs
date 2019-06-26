@@ -90,6 +90,7 @@ namespace market
                     ValidateAudience = true,
                     ValidIssuer = appSettings.Site,
                     ValidAudience = appSettings.Audience,
+                   
                     IssuerSigningKey = new SymmetricSecurityKey(key)
 
 
