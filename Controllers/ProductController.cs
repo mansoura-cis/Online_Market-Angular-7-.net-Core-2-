@@ -59,7 +59,7 @@ namespace market.Controllers
         #endregion
 
         #region Update Product
-        [HttpPut("[action]/[id]")]
+        [HttpPut("[action]/{id}")]
         [Authorize(Policy = "RequireAdministratorRole")]
         public async Task<IActionResult> updateProduct([FromRoute] int id , [FromBody] ProductModel formdata )
         {
@@ -87,7 +87,7 @@ namespace market.Controllers
         #endregion
 
         #region Delete product
-        [HttpDelete("[action]/[id]")]
+        [HttpDelete("[action]/{id}")]
         [Authorize(Policy = "RequireAdministratorRole")]
         public async Task<IActionResult> DeleteProduct([FromRoute] int id)
         {
